@@ -21,8 +21,6 @@ public class Main {
 	@GET
 	@Produces("application/json")
 	public String getAllCountries(){
-		Country b = dao.findByCode("AW");
-		System.out.println(b.getName());
 		List<Country> allCountries = ws.getAllCountries();
 		
 		if(allCountries == null){
@@ -71,6 +69,48 @@ public class Main {
 		JsonArrayBuilder jab = Json.createArrayBuilder();
 		allCountries.forEach(c -> jab.add(countryBuild(c)));
 		return jab.build().toString();
+	}
+	
+	@DELETE
+	@Path("/deletecountry")
+	public boolean deleteCountry(){
+		List<Country> allCountries = ws.get10LargestPopulations();
+		
+		if(allCountries == null){
+			throw new WebApplicationException("Something went wrong with getting all countries!");
+		}
+		
+		JsonArrayBuilder jab = Json.createArrayBuilder();
+		allCountries.forEach(c -> jab.add(countryBuild(c)));
+		return false;
+	}
+	
+	@GET
+	@Path("/insertcountry")
+	public boolean insertCountry(){
+		List<Country> allCountries = ws.get10LargestPopulations();
+		
+		if(allCountries == null){
+			throw new WebApplicationException("Something went wrong with getting all countries!");
+		}
+		
+		JsonArrayBuilder jab = Json.createArrayBuilder();
+		allCountries.forEach(c -> jab.add(countryBuild(c)));
+		return false;
+	}
+	
+	@GET
+	@Path("/updatecountry")
+	public boolean updateCountry(){
+		List<Country> allCountries = ws.get10LargestPopulations();
+		
+		if(allCountries == null){
+			throw new WebApplicationException("Something went wrong with getting all countries!");
+		}
+		
+		JsonArrayBuilder jab = Json.createArrayBuilder();
+		allCountries.forEach(c -> jab.add(countryBuild(c)));
+		return false;
 	}
 	
 	public JsonObjectBuilder countryBuild(Country c){

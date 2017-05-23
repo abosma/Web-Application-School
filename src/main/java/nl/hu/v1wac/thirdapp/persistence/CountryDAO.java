@@ -42,9 +42,21 @@ public class CountryDAO extends BaseDAO{
 			int indepyear = 0;
 			int population = country.getPopulation();
 			double lifeexpectancy = 0.0;
+			double gnp = 0.0;
+			double gnpgold = 0.0;
+			String localname = null;
+			String governmentform = country.getGovernment();
+			String headofstate = null;
+			String code2 = country.getCode();
+			double latitude = country.getLatitude();
+			double longitude = country.getLongitude();
+			String capital = country.getCapital();
 			
 			String query = "INSERT INTO country " +
-						   "VALUES('";
+						   "VALUES('" + code + "','" + name + "','" + continent + "','" + region + "'," +
+						   surfacearea + "," + indepyear + "," + population + "," + lifeexpectancy + "," +
+						   gnp + "," + gnpgold + ",'" + localname + "','" + governmentform + "','" +
+						   headofstate + "','" + code2 + "'," + latitude + "," + longitude + ",'" + capital + "')";
 			
 			stmt.executeQuery(query);
 			
@@ -94,5 +106,58 @@ public class CountryDAO extends BaseDAO{
 		});
 		
 		return cl.subList(0, 10);
+	}
+	
+	public Country update(Country country){
+		try(Connection con = super.getConnection()){
+			Statement stmt = con.createStatement();
+			
+			String code = country.getIso3Code();
+			String name = country.getName();
+			String continent = country.getContinent();
+			String region = country.getRegion();
+			double surfacearea = country.getSurface();
+			int indepyear = 0;
+			int population = country.getPopulation();
+			double lifeexpectancy = 0.0;
+			double gnp = 0.0;
+			double gnpgold = 0.0;
+			String localname = null;
+			String governmentform = country.getGovernment();
+			String headofstate = null;
+			String code2 = country.getCode();
+			double latitude = country.getLatitude();
+			double longitude = country.getLongitude();
+			String capital = country.getCapital();
+			
+			String query = "UPDATE country SET " +
+						   "(code, name, continent, region, surfacearea, indepyear, population, lifeexpectancy, " + 
+						   "gnp, gnpgold, localname, governmentform, headofstate, code2, latitude, longitude, capital) = " + 
+						   "('" + code + "','" + name + "','" + continent + "','" + region + "'," +
+						   surfacearea + "," + indepyear + "," + population + "," + lifeexpectancy + "," +
+						   gnp + "," + gnpgold + ",'" + localname + "','" + governmentform + "','" +
+						   headofstate + "','" + code2 + "'," + latitude + "," + longitude + ",'" + capital + "')" +
+						   " WHERE code2 = '" + code2 + "'";
+			
+			stmt.executeQuery(query);
+			
+			return country;
+		}catch(SQLException e){
+			return null;
+		}
+	}
+	
+	public boolean delete(Country country){
+		try(Connection con = super.getConnection()){
+			Statement stmt = con.createStatement();
+			
+			String query = "DELETE FROM country WHERE code2 = " + country.getCode();
+			
+			stmt.executeQuery(query);
+			
+			return true;
+		}catch(SQLException e){
+			return false;
+		}
 	}
 }
