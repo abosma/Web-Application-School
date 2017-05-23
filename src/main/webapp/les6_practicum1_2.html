@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Label Storage</title>
+	</head>
+	<body>
+		<label id="inputLabel"></label>
+	</body>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+	$(function () {
+		$(window).bind('storage', function (e) {
+			$("#inputLabel").append(localStorage.getItem("inputSave"));
+	  	});
+	});
+	</script>
+</html>

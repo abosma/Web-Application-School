@@ -1,0 +1,183 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<body>
+	<div id="frame">
+		<div id="frameMW">
+			<div id="myLocation">
+				<h2 id="titleML">Mijn Locatie</h2>
+				<div id="MLLabels">
+					<h4>Landcode:			<label id="lCode"></label></h4>
+					<h4>Land:				<label id="lNaam"></label></h4>
+					<h4>Regio:				<label id="lRegio"></label></h4>
+					<h4>Stad:				<label id="lStad"></label></h4>
+					<h4>Postcode:			<label id="lPostcode"></label></h4>
+					<h4>Latitude:			<label id="lLatitude"></label></h4>
+					<h4>Longitude:			<label id="lLongitude"></label></h4>
+					<h4>IP:					<label id="lIP"></label></h4>
+				</div>
+			</div>
+			<div id="weatherInfo">
+				<h2 id="titleWI">Het weer in <label id="stadNaam"></label></h2>
+				<div id="WILabels">
+					<h4>Tempratuur:			<label id="lTempratuur"></label></h4>
+					<h4>Luctvochtigheid:	<label id="lLuchtvochtigheid"></label></h4>
+					<h4>Windsnelheid:		<label id="lWindsnelheid"></label></h4>
+					<h4>Windrichting:		<label id="lWindrichting"></label></h4>
+					<h4>Zonsopgang:			<label id="lZonsopgang"></label></h4>
+					<h4>Zonsondergang:		<label id="lZonsondergang"></label></h4>
+				</div>
+			</div>
+		</div>
+		<div id="countryList" style="overflow-x:auto;">
+			<h2 id="titleCL">Beschikbare vakantiebestemmingen</h2>
+			<table id="CLTable">
+				<tr>
+					<th>Land</th>
+					<th>Hoofdstad</th>
+					<th>Regio</th>
+					<th>Oppervlakte</th>
+					<th>Inwoners</th>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+	<head>
+		<link rel="stylesheet" type="text/css" href="StyleSheet.css">
+	</head>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+	function initPage(){
+		$.ajax({
+			url: "http://ip-api.com/json",
+			type: "GET",
+			success: function ( data ) {
+		       	var ipJson = JSON.parse(JSON.stringify(data));
+		       	document.getElementById("lCode").innerHTML = ipJson["countryCode"];
+		       	document.getElementById("lNaam").innerHTML = ipJson["country"];
+		       	document.getElementById("lRegio").innerHTML = ipJson["region"];
+		       	document.getElementById("lStad").innerHTML = ipJson["city"];
+		       	document.getElementById("lPostcode").innerHTML = ipJson["zip"];
+		       	document.getElementById("lLatitude").innerHTML = ipJson["lat"];
+		       	document.getElementById("lLongitude").innerHTML = ipJson["lon"];
+		       	document.getElementById("lIP").innerHTML = ipJson["query"];
+		       	showWeather(ipJson["lat"], ipJson["lon"], ipJson["city"])
+		       	loadCountries();
+			}
+		});
+	}
+	
+	function degToCompass(num) {
+	    var val = Math.floor((num / 22.5) + 0.5);
+	    var arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+	    return arr[(val % 16)];
+	}
+	
+	function unixToTime(unix){
+		var date = new Date(unix * 1000);
+		var hours = date.getHours();
+		var minutes = "0" + date.getMinutes();
+		var seconds = "0" + date.getSeconds();
+		return (hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2));
+	}
+	
+	function showWeather(latitude, longitude, city){
+		
+		document.getElementById("stadNaam").innerHTML = city;
+		
+		if(localStorage.getItem(city) == null){
+			$.ajax({
+				url: "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=a40051c6d53e900889105abcdc376832",
+				type: "GET",
+				success: function ( data ) {
+					localStorage.setItem(city, JSON.stringify(data));
+					localStorage.setItem(city + "_storageDate", new Date())
+					var owmJson = JSON.parse(localStorage.getItem(city));
+					document.getElementById("lTempratuur").innerHTML = (Math.round((owmJson["main"]["temp"] - 273.15) * 10) / 10) + " °C";
+					document.getElementById("lLuchtvochtigheid").innerHTML = owmJson["main"]["humidity"] + "%";
+					document.getElementById("lWindsnelheid").innerHTML = (owmJson["wind"]["speed"] * 3.6) + " km/u";
+					document.getElementById("lWindrichting").innerHTML = degToCompass(owmJson["wind"]["deg"]);
+					document.getElementById("lZonsopgang").innerHTML = unixToTime(owmJson["sys"]["sunrise"]);
+					document.getElementById("lZonsondergang").innerHTML = unixToTime(owmJson["sys"]["sunset"]);
+				}
+			});
+		}else{
+			var diff = Math.abs(new Date() - Date.parse(localStorage.getItem(city + "_storageDate")));
+			var minutes = Math.floor((diff/1000)/60);
+			
+			if(minutes < 10){
+				var owmJson = JSON.parse(localStorage.getItem(city));
+				document.getElementById("lTempratuur").innerHTML = (Math.round((owmJson["main"]["temp"] - 273.15) * 10) / 10) + " °C";
+				document.getElementById("lLuchtvochtigheid").innerHTML = owmJson["main"]["humidity"] + "%";
+				document.getElementById("lWindsnelheid").innerHTML = (owmJson["wind"]["speed"] * 3.6) + " km/u";
+				document.getElementById("lWindrichting").innerHTML = degToCompass(owmJson["wind"]["deg"]);
+				document.getElementById("lZonsopgang").innerHTML = unixToTime(owmJson["sys"]["sunrise"]);
+				document.getElementById("lZonsondergang").innerHTML = unixToTime(owmJson["sys"]["sunset"]);
+			}else{
+				$.ajax({
+					url: "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=a40051c6d53e900889105abcdc376832",
+					type: "GET",
+					success: function ( data ) {
+						localStorage.setItem(city, JSON.stringify(data));
+						localStorage.setItem(city + "_storageDate", new Date())
+						var owmJson = JSON.parse(localStorage.getItem(city));
+						document.getElementById("lTempratuur").innerHTML = (Math.round((owmJson["main"]["temp"] - 273.15) * 10) / 10) + " °C";
+						document.getElementById("lLuchtvochtigheid").innerHTML = owmJson["main"]["humidity"] + "%";
+						document.getElementById("lWindsnelheid").innerHTML = (owmJson["wind"]["speed"] * 3.6) + " km/u";
+						document.getElementById("lWindrichting").innerHTML = degToCompass(owmJson["wind"]["deg"]);
+						document.getElementById("lZonsopgang").innerHTML = unixToTime(owmJson["sys"]["sunrise"]);
+						document.getElementById("lZonsondergang").innerHTML = unixToTime(owmJson["sys"]["sunset"]);
+					}
+				});
+			}
+		}
+	}
+	
+	function loadCountries(){
+		$.ajax( {
+		    url: "restservices/countries/",
+		    dataType: 'json',
+		    success: function ( data ) {
+		        var lcJSON = JSON.parse(JSON.stringify(data));
+		        $.each(lcJSON, function(index, value){
+		        	if(value["code"] != document.getElementById("lCode").innerHTML){
+		        		$("#CLTable").append("<tr><td id=" + index + ">" + value["name"] + "</td><td>" + value["capital"] + "</td><td>" + value["region"] + "</td><td>" + value["surface"] + "</td><td>" + value["population"] + "</td></tr>");
+		        		
+		        		$("#" + index).hover(function(e) {
+		        			$(this).css("color", e.type === "mouseenter"?"white":"black")
+		        		});
+		        		
+		        		$("#" + index).click(function() {
+		        			showWeather(value["lat"], value["lng"], value["capital"]);
+		        		});
+		        	}else{
+		        		$("#CLTable").append("<tr><td id=" + "ownCountry" + ">" + value["name"] + "</td><td>" + value["capital"] + "</td><td>" + value["region"] + "</td><td>" + value["surface"] + "</td><td>" + value["population"] + "</td></tr>");
+		        		$("#ownCountry").hover(function(e) {
+		        			$(this).css("color", e.type === "mouseenter"?"white":"black")
+		        		});
+		        		$("#ownCountry").click(function() {
+		        			$.ajax({
+		        				url: "http://ip-api.com/json",
+		        				type: "GET",
+		        				success: function ( data ) {
+		        			       	var ipJson = JSON.parse(JSON.stringify(data));
+		        			       	document.getElementById("lCode").innerHTML = ipJson["countryCode"];
+		        			       	document.getElementById("lNaam").innerHTML = ipJson["country"];
+		        			       	document.getElementById("lRegio").innerHTML = ipJson["region"];
+		        			       	document.getElementById("lStad").innerHTML = ipJson["city"];
+		        			       	document.getElementById("lPostcode").innerHTML = ipJson["zip"];
+		        			       	document.getElementById("lLatitude").innerHTML = ipJson["lat"];
+		        			       	document.getElementById("lLongitude").innerHTML = ipJson["lon"];
+		        			       	document.getElementById("lIP").innerHTML = ipJson["query"];
+		        			       	showWeather(ipJson["lat"], ipJson["lon"], ipJson["city"])
+		        				}
+		        			});
+		        		});
+		        	}
+		        })
+		    }
+		});
+	}
+	
+	window.onload = initPage;
+	</script>
+</body>
