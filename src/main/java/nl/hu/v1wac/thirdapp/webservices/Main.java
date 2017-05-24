@@ -72,8 +72,8 @@ public class Main {
 	}
 	
 	@DELETE
-	@Path("/deletecountry")
-	public boolean deleteCountry(){
+	@Path("{ccode}/deletecountry")
+	public boolean deleteCountry(@PathParam("ccode") String ccode){
 		List<Country> allCountries = ws.get10LargestPopulations();
 		
 		if(allCountries == null){
@@ -85,9 +85,9 @@ public class Main {
 		return false;
 	}
 	
-	@GET
-	@Path("/insertcountry")
-	public boolean insertCountry(){
+	@POST
+	@Path("{ccode}/insertcountry")
+	public boolean insertCountry(@PathParam("ccode") String ccode){
 		List<Country> allCountries = ws.get10LargestPopulations();
 		
 		if(allCountries == null){
@@ -99,9 +99,9 @@ public class Main {
 		return false;
 	}
 	
-	@GET
-	@Path("/updatecountry")
-	public boolean updateCountry(){
+	@PUT
+	@Path("{ccode}/updatecountry")
+	public boolean updateCountry(@PathParam("ccode") String ccode){
 		List<Country> allCountries = ws.get10LargestPopulations();
 		
 		if(allCountries == null){

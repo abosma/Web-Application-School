@@ -1,0 +1,66 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<body>
+	<div id="frame">
+		<div id="countryList" style="overflow-x:auto;">
+			<h2 id="titleCL">Landen</h2>
+			<table id="CLTable">
+				<tr>
+					<th>Land</th>
+					<th>Hoofdstad</th>
+					<th>Regio</th>
+					<th>Oppervlakte</th>
+					<th>Inwoners</th>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<head>
+		<link rel="stylesheet" type="text/css" href="StyleSheet.css">
+	</head>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+	function initPage(){
+		loadCountries();
+	}
+	
+	function popUp(iso2){
+		$.ajax( {
+		    url: "restservices/countries/" + iso2,
+		    dataType: 'json',
+		    success: function ( data ) {
+		    	var lcJSON = JSON.parse(JSON.stringify(data));
+		    	$.each(lcJSON, function(index, value){
+			    	console.log(value);
+					$(document.body).append("<div id=\"pop1\" class=\"popbox\"><h2 class=\"test\">" + value["name"] + "</h2></div>")
+					$("#pop1").css("left", "33%");
+					$("#pop1").css("top", "50%");
+					$("#pop1").show();
+		    	});
+		    }
+		});
+	}
+	
+	function loadCountries(){
+		$.ajax( {
+		    url: "restservices/countries/",
+		    dataType: 'json',
+		    success: function ( data ) {
+		        var lcJSON = JSON.parse(JSON.stringify(data));
+		        $.each(lcJSON, function(index, value){
+	        		$("#CLTable").append("<tr><td id=" + index + ">" + value["name"] + "</td><td>" + value["capital"] + "</td><td>" + value["region"] + "</td><td>" + value["surface"] + "</td><td>" + value["population"] + "</td></tr>");
+	        		
+	        		$("#" + index).hover(function(e) {
+	        			$(this).css("color", e.type === "mouseenter"?"white":"black")
+	        		});
+	        		
+	        		$("#" + index).click(function() {
+	        			popUp(value["code"]);
+	        		});
+		        });
+		    }
+		});
+	}
+	
+	window.onload = initPage;
+	</script>
+</body>
