@@ -78,8 +78,6 @@ public class Main {
 		
 		Country c = dao.findByCode(ccode);
 		
-		System.out.println(c);
-		
 		if(c == null){
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}else{
