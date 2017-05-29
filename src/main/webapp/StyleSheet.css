@@ -3,7 +3,6 @@ body {
 }
 
 .popbox {
-    display: none;
     position: fixed;
     z-index: 99999;
     width: 400px;
