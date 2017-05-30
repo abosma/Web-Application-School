@@ -1,0 +1,260 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<body>
+	<div id="frame">
+		<div id="countryList" style="overflow-x:auto;">
+			<h2 id="titleCL">Landen</h2>
+			<input type="text" id="searchQuery" onkeyup="filterLanden()" placeholder="Zoek voor een land..">
+			<button onclick="saveCountryPopup()">Toevoegen Land</button>
+			<table id="CLTable">
+				<tr>
+					<th>Land</th>
+					<th>Hoofdstad</th>
+					<th>Regio</th>
+					<th>Oppervlakte</th>
+					<th>Inwoners</th>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<head>
+		<link rel="stylesheet" type="text/css" href="StyleSheet.css">
+	</head>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+	function initPage(){
+		loadCountries();
+	}
+	
+	function filterLanden(){
+		var input, filter, table, tr, td, i;
+		input = document.getElementById("searchQuery");
+		filter = input.value.toUpperCase();
+		table = document.getElementById("CLTable");
+		tr = table.getElementsByTagName("tr");
+
+		  // Loop through all table rows, and hide those who don't match the search query
+		for (i = 0; i < tr.length; i++) {
+		  td = tr[i].getElementsByTagName("td")[0];
+		  if (td) {
+		    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+		      tr[i].style.display = "";
+		    } else {
+		      tr[i].style.display = "none";
+		    }
+		  } 
+		}
+  	}
+	
+	function saveCountryPopup(){
+		if(!$("#pop1").length){
+			$(document.body).append("<div id=\"pop1\" class=\"popbox\">")
+			$("#pop1").append("<h2 class=\"naam\">Nieuw Land</h2><form id=\"countryForm\"></form>")
+			$("#countryForm").append("Code: " + "<input type=\"text\" name=\"code\" required class=\"codeInput\"></input><br>")
+			$("#countryForm").append("Capital: " + "<input type=\"text\" name=\"capital\" required class=\"capitalInput\"></input><br>")
+			$("#countryForm").append("Continent: " + "<input type=\"text\" name=\"continent\" required class=\"conInput\"></input><br>")
+			$("#countryForm").append("Government: " + "<input type=\"text\" name=\"government\" required class=\"govInput\"></input><br>")
+			$("#countryForm").append("Iso3: " + "<input type=\"text\" name=\"iso3\" required class=\"iso3Input\"></input><br>")
+			$("#countryForm").append("Latitude: " + "<input type=\"text\" name=\"latitude\" required class=\"latInput\"></input><br>")
+			$("#countryForm").append("Longitude: " + "<input type=\"text\" name=\"longitude\" required class=\"lonInput\"></input><br>")
+			$("#countryForm").append("Name: " + "<input type=\"text\" name=\"name\" required class=\"nameInput\"></input><br>")
+			$("#countryForm").append("Population: " + "<input type=\"text\" name=\"population\" required class=\"popInput\"></input><br>")
+			$("#countryForm").append("Region: " + "<input type=\"text\" name=\"region\" required class=\"regInput\"></input><br>")
+			$("#countryForm").append("Surface: " + "<input type=\"text\" name=\"surface\" required class=\"surInput\"></input><br>")
+			$("#countryForm").append("<input type=\"submit\" value=\"Save\" class=\"hide\">")
+			$("#pop1").append("<button class=\"saveButton\">Save</button><button onclick=\"closePopup()\">Exit</button></div>");
+			$("#pop1").css("left", "33%");
+			$("#pop1").css("top", "50%");
+			$(".hide").hide();
+			$(".saveButton").click(function() {
+				$('#countryForm :input:visible[required="required"]').each(function()
+				{
+				    if(!this.validity.valid)
+				    {
+				    	alert("Niet alles is ingevuld")
+				        $(this).focus();
+				    }else{
+				    	if(isNaN(parseFloat($(".surInput").val())) || isNaN(parseFloat($(".latInput").val())) || isNaN(parseInt($(".popInput").val())) || isNaN(parseFloat($(".lonInput").val()))){
+				    		alert("Surface, Latitude, Longitude of Population zijn niet nummers")
+				    	}else{
+				    		var data = $("#countryForm").serialize();
+							saveCountry(data);
+				    	}
+				    }
+				});
+			});
+			
+			$("#pop1").show();
+		}else{
+			closePopup();
+			$(document.body).append("<div id=\"pop1\" class=\"popbox\">")
+			$("#pop1").append("<h2 class=\"naam\">Nieuw Land</h2><form id=\"countryForm\"></form>")
+			$("#countryForm").append("Code: " + "<input type=\"text\" name=\"code\" required class=\"codeInput\"></input><br>")
+			$("#countryForm").append("Capital: " + "<input type=\"text\" name=\"capital\" required class=\"capitalInput\"></input><br>")
+			$("#countryForm").append("Continent: " + "<input type=\"text\" name=\"continent\" required class=\"conInput\"></input><br>")
+			$("#countryForm").append("Government: " + "<input type=\"text\" name=\"government\" required class=\"govInput\"></input><br>")
+			$("#countryForm").append("Iso3: " + "<input type=\"text\" name=\"iso3\" required class=\"iso3Input\"></input><br>")
+			$("#countryForm").append("Latitude: " + "<input type=\"text\" name=\"latitude\" required class=\"latInput\"></input><br>")
+			$("#countryForm").append("Longitude: " + "<input type=\"text\" name=\"longitude\" required class=\"lonInput\"></input><br>")
+			$("#countryForm").append("Name: " + "<input type=\"text\" name=\"name\" required class=\"nameInput\"></input><br>")
+			$("#countryForm").append("Population: " + "<input type=\"text\" name=\"population\" required class=\"popInput\"></input><br>")
+			$("#countryForm").append("Region: " + "<input type=\"text\" name=\"region\" required class=\"regInput\"></input><br>")
+			$("#countryForm").append("Surface: " + "<input type=\"text\" name=\"surface\" required class=\"surInput\"></input><br>")
+			$("#countryForm").append("<input type=\"submit\" value=\"Save\" class=\"hide\">")
+			$("#pop1").append("<button class=\"saveButton\">Save</button><button onclick=\"closePopup()\">Exit</button></div>");
+			$("#pop1").css("left", "33%");
+			$("#pop1").css("top", "50%");
+			$(".hide").hide();
+			$(".saveButton").click(function() {
+				$('#countryForm :input:visible[required="required"]').each(function()
+				{
+				    if(!this.validity.valid)
+				    {
+				    	alert("Niet alles is ingevuld")
+				        $(this).focus();
+				    }else{
+				    	if(isNaN(parseFloat($(".surInput").val())) || isNaN(parseFloat($(".latInput").val())) || isNaN(parseInt($(".popInput").val())) || isNaN(parseFloat($(".lonInput").val()))){
+				    		alert("Surface, Latitude, Longitude of Population zijn niet nummers")
+				    	}else{
+				    		var data = $("#countryForm").serialize();
+							saveCountry(data);
+				    	}
+				    }
+				});
+			});
+			
+			$("#pop1").show();
+		}
+	}
+	
+	function popUp(iso2){
+		$.ajax( {
+		    url: "restservices/countries/" + iso2,
+		    dataType: 'json',
+		    success: function ( data ) {
+		    	var lcJSON = JSON.parse(JSON.stringify(data));
+		    	$.each(lcJSON, function(index, value){
+		    		console.log(value)
+			    	if(!$("#pop1").length){
+						$(document.body).append("<div id=\"pop1\" class=\"popbox\">")
+						$("#pop1").append("<h2 class=\"naam\">" + value["name"] + "</h2><form id=\"countryForm\"></form>")
+						$("#countryForm").append("Capital: " + "<input type=\"text\" name=\"capital\" class=\"capitalInput\" value=" + value["capital"] + "></input><br>")
+						$("#countryForm").append("Continent: " + "<input type=\"text\" name=\"continent\"  class=\"conInput\" value=" + value["continent"] + "></input><br>")
+						$("#countryForm").append("Government: " + "<input type=\"text\" name=\"government\"  class=\"govInput\" value=" + value["government"] + "></input><br>")
+						$("#countryForm").append("Iso3: " + "<input type=\"text\" name=\"iso3\"  class=\"iso3Input\" value=" + value["iso3"] + "></input><br>")
+						$("#countryForm").append("Latitude: " + "<input type=\"text\" name=\"latitude\"  class=\"latInput\" value=" + value["lat"] + "></input><br>")
+						$("#countryForm").append("Longitude: " + "<input type=\"text\" name=\"longitude\"  class=\"lonInput\" value=" + value["lng"] + "></input><br>")
+						$("#countryForm").append("Name: " + "<input type=\"text\" name=\"name\"  class=\"nameInput\" value=" + value["name"] + "></input><br>")
+						$("#countryForm").append("Population: " + "<input type=\"text\" name=\"population\"  class=\"popInput\" value=" + value["population"] + "></input><br>")
+						$("#countryForm").append("Region: " + "<input type=\"text\" name=\"region\"  class=\"regInput\" value=" + value["region"] + "></input><br>")
+						$("#countryForm").append("Surface: " + "<input type=\"text\" name=\"surface\"  class=\"surInput\" value=" + value["surface"] + "></input><br>")
+						$("#pop1").append("<button class=\"saveButton\">Save</button><button class=\"deleteButton\">Delete</button><button onclick=\"closePopup()\">Exit</button></div>");
+						$("#pop1").css("left", "33%");
+						$("#pop1").css("top", "50%");
+						
+						$(".saveButton").click(function() {
+							var data = $("#countryForm").serialize();
+		        			updateCountry(iso2, data);
+		        		});
+						
+						$(".deleteButton").click(function() {
+		        			deleteCountry(iso2);
+		        		});
+						
+						$("#pop1").show();
+			    	}else{
+			    		closePopup();
+			    		$(document.body).append("<div id=\"pop1\" class=\"popbox\">")
+						$("#pop1").append("<h2 class=\"naam\">" + value["name"] + "</h2><form id=\"countryForm\"></form>")
+						$("#countryForm").append("Capital: " + "<input type=\"text\" name=\"capital\" class=\"capitalInput\" value=" + value["capital"] + "></input><br>")
+						$("#countryForm").append("Continent: " + "<input type=\"text\" name=\"continent\"  class=\"conInput\" value=" + value["continent"] + "></input><br>")
+						$("#countryForm").append("Government: " + "<input type=\"text\" name=\"government\"  class=\"govInput\" value=" + value["government"] + "></input><br>")
+						$("#countryForm").append("Iso3: " + "<input type=\"text\" name=\"iso3\"  class=\"iso3Input\" value=" + value["iso3"] + "></input><br>")
+						$("#countryForm").append("Latitude: " + "<input type=\"text\" name=\"latitude\"  class=\"latInput\" value=" + value["lat"] + "></input><br>")
+						$("#countryForm").append("Longitude: " + "<input type=\"text\" name=\"longitude\"  class=\"lonInput\" value=" + value["lng"] + "></input><br>")
+						$("#countryForm").append("Name: " + "<input type=\"text\" name=\"name\"  class=\"nameInput\" value=" + value["name"] + "></input><br>")
+						$("#countryForm").append("Population: " + "<input type=\"text\" name=\"population\"  class=\"popInput\" value=" + value["population"] + "></input><br>")
+						$("#countryForm").append("Region: " + "<input type=\"text\" name=\"region\"  class=\"regInput\" value=" + value["region"] + "></input><br>")
+						$("#countryForm").append("Surface: " + "<input type=\"text\" name=\"surface\"  class=\"surInput\" value=" + value["surface"] + "></input><br>")
+						$("#pop1").append("<button class=\"saveButton\">Save</button><button class=\"deleteButton\">Delete</button><button onclick=\"closePopup()\">Exit</button></div>");
+						$("#pop1").css("left", "33%");
+						$("#pop1").css("top", "50%");
+						
+						$(".saveButton").click(function() {
+							var data = $("#countryForm").serialize();
+		        			updateCountry(iso2, data);
+		        		});
+						
+						$(".deleteButton").click(function() {
+		        			deleteCountry(iso2);
+		        		});
+						
+						$("#pop1").show();
+			    	}
+		    	});
+		    }
+		});
+	}
+	
+	function saveCountry(formData){
+		$.ajax( {
+			type: "POST",
+		    url: "restservices/countries/insertcountry",
+		    data: formData,
+		    success: function ( response ) {
+		    	alert("Nieuw land opgeslagen!")
+		    }
+		});
+		location.reload(true);
+	}
+	
+	function updateCountry(iso2, formData){
+		$.ajax( {
+			type: "PUT",
+		    url: "restservices/countries/" + iso2 + "/updatecountry",
+		    data: formData,
+		    success: function ( response ) {
+		    	alert("Land geupdatet!")
+		    }
+		});
+		location.reload(true);
+	}
+	
+	function deleteCountry(iso2){
+		$.ajax( {
+			type: "delete",
+		    url: "restservices/countries/" + iso2 + "/deletecountry",
+		    success: function ( response ) {
+		    	alert("Land Verwijderd!")
+		    }
+		});
+		location.reload(true);
+	}
+	
+	function closePopup(){
+		$("#pop1").remove();
+	}
+	
+	function loadCountries(){
+		$.ajax( {
+		    url: "restservices/countries/",
+		    dataType: 'json',
+		    success: function ( data ) {
+		        var lcJSON = JSON.parse(JSON.stringify(data));
+		        $.each(lcJSON, function(index, value){
+	        		$("#CLTable").append("<tr><td id=" + index + ">" + value["name"] + "</td><td>" + value["capital"] + "</td><td>" + value["region"] + "</td><td>" + value["surface"] + "</td><td>" + value["population"] + "</td></tr>");
+	        		
+	        		$("#" + index).hover(function(e) {
+	        			$(this).css("color", e.type === "mouseenter"?"white":"black")
+	        		});
+	        		
+	        		$("#" + index).click(function() {
+	        			popUp(value["code"]);
+	        		});
+		        });
+		    }
+		});
+	}
+	
+	window.onload = initPage;
+	</script>
+</body>

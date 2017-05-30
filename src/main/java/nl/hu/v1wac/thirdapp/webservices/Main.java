@@ -7,6 +7,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import nl.hu.v1wac.thirdapp.model.*;
 import nl.hu.v1wac.thirdapp.persistence.CountryDAO;
@@ -21,9 +22,7 @@ public class Main {
 	@GET
 	@Produces("application/json")
 	public String getAllCountries(){
-		Country b = dao.findByCode("AW");
-		System.out.println(b.getName());
-		List<Country> allCountries = ws.getAllCountries();
+		List<Country> allCountries = dao.findAll();
 		
 		if(allCountries == null){
 			throw new WebApplicationException("Something went wrong with getting all countries!");
@@ -38,7 +37,7 @@ public class Main {
 	@Path("{ccode}")
 	@Produces("application/json")
 	public String getByCountryCode(@PathParam("ccode") String ccode ){
-		Country c = ws.getCountryByCode(ccode.toUpperCase());
+		Country c = dao.findByCode(ccode);
 		
 		if(c == null){
 			throw new WebApplicationException("No country found with that code!");
@@ -52,7 +51,7 @@ public class Main {
 	@Path("/largestsurfaces")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getLargestSurfaces(){
-		List<Country> allCountries = ws.get10LargestSurfaces();
+		List<Country> allCountries = dao.find10LargestSurfaces();
 		JsonArrayBuilder jab = Json.createArrayBuilder();
 		allCountries.forEach(c -> jab.add(countryBuild(c)));
 		return jab.build().toString();
@@ -62,7 +61,7 @@ public class Main {
 	@Path("/largestpopulations")
 	@Produces("application/json")
 	public String getLargestPopulations(){
-		List<Country> allCountries = ws.get10LargestPopulations();
+		List<Country> allCountries = dao.find10LargestPopulations();
 		
 		if(allCountries == null){
 			throw new WebApplicationException("Something went wrong with getting all countries!");
@@ -71,6 +70,71 @@ public class Main {
 		JsonArrayBuilder jab = Json.createArrayBuilder();
 		allCountries.forEach(c -> jab.add(countryBuild(c)));
 		return jab.build().toString();
+	}
+	
+	@DELETE
+	@Path("{ccode}/deletecountry")
+	public Response deleteCountry(@PathParam("ccode") String ccode){
+		
+		Country c = dao.findByCode(ccode);
+		
+		if(c == null){
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}else{
+			dao.delete(c);
+			return Response.ok().build();
+		}
+		
+	}
+	
+	@POST
+	@Path("/insertcountry")
+	public Response insertCountry(@FormParam("code") String ccode,
+								 @FormParam("capital") String capital,
+								 @FormParam("continent") String continent,
+								 @FormParam("government") String government,
+								 @FormParam("iso3") String iso3,
+								 @FormParam("latitude") double lat,
+								 @FormParam("longitude") double lon,
+								 @FormParam("name") String name,
+								 @FormParam("population") int pop,
+								 @FormParam("region") String reg,
+								 @FormParam("surface") double surface){
+		
+		Country c = new Country(ccode, iso3, name, capital, continent, reg, surface, pop, government, lat, lon);
+		
+		Country response = dao.save(c);
+		
+		if(response == null){
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}else{
+			return Response.ok().build();
+		}
+	}
+	
+	@PUT
+	@Path("{ccode}/updatecountry")
+	public Response updateCountry(@PathParam("ccode") String ccode,
+								 @FormParam("capital") String capital,
+								 @FormParam("continent") String continent,
+								 @FormParam("government") String government,
+								 @FormParam("iso3") String iso3,
+								 @FormParam("latitude") double lat,
+								 @FormParam("longitude") double lon,
+								 @FormParam("name") String name,
+								 @FormParam("population") int pop,
+								 @FormParam("region") String reg,
+								 @FormParam("surface") double surface){
+		
+		Country c = new Country(ccode, iso3, name, capital, continent, reg, surface, pop, government, lat, lon);
+		
+		Country response = dao.update(c);
+		
+		if(response == null){
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}else{
+			return Response.ok().build();
+		}
 	}
 	
 	public JsonObjectBuilder countryBuild(Country c){
