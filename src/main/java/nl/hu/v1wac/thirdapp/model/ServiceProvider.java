@@ -1,9 +1,11 @@
 package nl.hu.v1wac.thirdapp.model;
 
-public class ServiceProvider {
-	private static WorldService worldService = new WorldService();
+import nl.hu.v1wac.thirdapp.persistence.CountryDAO;
 
-	public static WorldService getWorldService() {
-		return worldService;
+public class ServiceProvider {
+	private static CountryDAO cd = new CountryDAO();
+
+	public static CountryDAO getCountryDAO() {
+		return cd;
 	}
 }

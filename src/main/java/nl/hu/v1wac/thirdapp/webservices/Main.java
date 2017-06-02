@@ -2,6 +2,7 @@ package nl.hu.v1wac.thirdapp.webservices;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -16,8 +17,6 @@ import nl.hu.v1wac.thirdapp.persistence.CountryDAO;
 public class Main {
 	
 	CountryDAO dao = new CountryDAO();
-	
-	static WorldService ws = ServiceProvider.getWorldService();
 	
 	@GET
 	@Produces("application/json")
@@ -73,6 +72,7 @@ public class Main {
 	}
 	
 	@DELETE
+	@RolesAllowed("user")
 	@Path("{ccode}/deletecountry")
 	public Response deleteCountry(@PathParam("ccode") String ccode){
 		
@@ -88,6 +88,7 @@ public class Main {
 	}
 	
 	@POST
+	@RolesAllowed("user")
 	@Path("/insertcountry")
 	public Response insertCountry(@FormParam("code") String ccode,
 								 @FormParam("capital") String capital,
@@ -113,6 +114,7 @@ public class Main {
 	}
 	
 	@PUT
+	@RolesAllowed("user")
 	@Path("{ccode}/updatecountry")
 	public Response updateCountry(@PathParam("ccode") String ccode,
 								 @FormParam("capital") String capital,
@@ -152,5 +154,4 @@ public class Main {
 		job.add("lng", c.getLongitude());
 		return job;
 	}
-	
 }

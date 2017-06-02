@@ -172,9 +172,17 @@ public class CountryDAO extends BaseDAO{
 		try(Connection con = super.getConnection()){
 			Statement stmt = con.createStatement();
 			
-			String query = "DELETE FROM country WHERE code2 LIKE '" + country.getCode() + "'";
+			String query1 = "DELETE FROM city WHERE countrycode = '" + country.getIso3Code() + "'";
+			String query2 = "DELETE FROM countrylanguage WHERE countrycode = '" + country.getIso3Code() + "'";
+			String query3 = "DELETE FROM country WHERE code = '" + country.getIso3Code() + "'";
 			
-			stmt.executeQuery(query);
+			stmt.addBatch(query1);
+			stmt.addBatch(query2);
+			stmt.addBatch(query3);
+			
+			int[] success = stmt.executeBatch();
+			
+			System.out.println(success);
 			
 			updateList();
 			

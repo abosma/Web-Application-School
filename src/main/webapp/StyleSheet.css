@@ -59,6 +59,10 @@ body {
 	cursor: pointer;
 }
 
+#CLTable tr td {
+	align: right;
+}
+
 @media screen and (min-width: 750px) {
     #frameMW {
     	display: grid;
