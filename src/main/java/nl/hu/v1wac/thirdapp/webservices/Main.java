@@ -19,6 +19,7 @@ public class Main {
 	CountryDAO dao = new CountryDAO();
 	
 	@GET
+	@RolesAllowed("User")
 	@Produces("application/json")
 	public String getAllCountries(){
 		List<Country> allCountries = dao.findAll();

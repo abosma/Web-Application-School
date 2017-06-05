@@ -198,6 +198,10 @@
 	function saveCountry(formData){
 		$.ajax( {
 			type: "POST",
+			beforeSend: function (xhr) {
+		        var token = window.sessionStorage.getItem("sessionToken");
+		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+		    },
 		    url: "restservices/countries/insertcountry",
 		    data: formData,
 		    success: function ( response ) {
@@ -210,6 +214,10 @@
 	function updateCountry(iso2, formData){
 		$.ajax( {
 			type: "PUT",
+			beforeSend: function (xhr) {
+		        var token = window.sessionStorage.getItem("sessionToken");
+		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+		    },
 		    url: "restservices/countries/" + iso2 + "/updatecountry",
 		    data: formData,
 		    success: function ( response ) {
@@ -222,6 +230,10 @@
 	function deleteCountry(iso2){
 		$.ajax( {
 			type: "delete",
+			beforeSend: function (xhr) {
+		        var token = window.sessionStorage.getItem("sessionToken");
+		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+		    },
 		    url: "restservices/countries/" + iso2 + "/deletecountry",
 		    success: function ( response ) {
 		    	alert("Land Verwijderd!")
@@ -238,6 +250,10 @@
 		$.ajax( {
 		    url: "restservices/countries/",
 		    dataType: 'json',
+		    beforeSend: function (xhr) {
+		        var token = window.sessionStorage.getItem("sessionToken");
+		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+		    },
 		    success: function ( data ) {
 		        var lcJSON = JSON.parse(JSON.stringify(data));
 		        $.each(lcJSON, function(index, value){
