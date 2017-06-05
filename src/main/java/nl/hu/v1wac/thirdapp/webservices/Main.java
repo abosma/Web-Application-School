@@ -7,7 +7,6 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import nl.hu.v1wac.thirdapp.model.*;
@@ -34,6 +33,7 @@ public class Main {
 	}
 	
 	@GET
+	@RolesAllowed("User")
 	@Path("{ccode}")
 	@Produces("application/json")
 	public String getByCountryCode(@PathParam("ccode") String ccode ){
@@ -48,8 +48,9 @@ public class Main {
 	}
 	
 	@GET
+	@RolesAllowed("User")
 	@Path("/largestsurfaces")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces("application/json")
 	public String getLargestSurfaces(){
 		List<Country> allCountries = dao.find10LargestSurfaces();
 		JsonArrayBuilder jab = Json.createArrayBuilder();
@@ -58,6 +59,7 @@ public class Main {
 	}
 	
 	@GET
+	@RolesAllowed("User")
 	@Path("/largestpopulations")
 	@Produces("application/json")
 	public String getLargestPopulations(){
