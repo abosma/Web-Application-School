@@ -130,6 +130,10 @@
 		$.ajax( {
 		    url: "restservices/countries/" + iso2,
 		    dataType: 'json',
+		    beforeSend: function (xhr) {
+		        var token = window.sessionStorage.getItem("sessionToken");
+		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+		    },
 		    success: function ( data ) {
 		    	var lcJSON = JSON.parse(JSON.stringify(data));
 		    	$.each(lcJSON, function(index, value){

@@ -48,19 +48,19 @@
 	<script>
 	function initPage(){
 		$.ajax({
-			url: "http://ip-api.com/json",
+			url: "https://ipapi.co/json/",
 			type: "GET",
 			success: function ( data ) {
 		       	var ipJson = JSON.parse(JSON.stringify(data));
-		       	document.getElementById("lCode").innerHTML = ipJson["countryCode"];
-		       	document.getElementById("lNaam").innerHTML = ipJson["country"];
+		       	document.getElementById("lCode").innerHTML = ipJson["country"];
+		       	document.getElementById("lNaam").innerHTML = ipJson["country_name"];
 		       	document.getElementById("lRegio").innerHTML = ipJson["region"];
 		       	document.getElementById("lStad").innerHTML = ipJson["city"];
-		       	document.getElementById("lPostcode").innerHTML = ipJson["zip"];
-		       	document.getElementById("lLatitude").innerHTML = ipJson["lat"];
-		       	document.getElementById("lLongitude").innerHTML = ipJson["lon"];
-		       	document.getElementById("lIP").innerHTML = ipJson["query"];
-		       	showWeather(ipJson["lat"], ipJson["lon"], ipJson["city"])
+		       	document.getElementById("lPostcode").innerHTML = ipJson["postal"];
+		       	document.getElementById("lLatitude").innerHTML = ipJson["latitude"];
+		       	document.getElementById("lLongitude").innerHTML = ipJson["longitude"];
+		       	document.getElementById("lIP").innerHTML = ipJson["ip"];
+		       	showWeather(ipJson["latitude"], ipJson["longitude"], ipJson["city"])
 		       	loadCountries();
 			}
 		});
@@ -136,6 +136,10 @@
 		$.ajax( {
 		    url: "restservices/countries/",
 		    dataType: 'json',
+		    beforeSend: function (xhr) {
+		        var token = window.sessionStorage.getItem("sessionToken");
+		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+		    },
 		    success: function ( data ) {
 		        var lcJSON = JSON.parse(JSON.stringify(data));
 		        $.each(lcJSON, function(index, value){
@@ -156,19 +160,19 @@
 		        		});
 		        		$("#ownCountry").click(function() {
 		        			$.ajax({
-		        				url: "http://ip-api.com/json",
+		        				url: "https://ipapi.co/json/",
 		        				type: "GET",
 		        				success: function ( data ) {
 		        			       	var ipJson = JSON.parse(JSON.stringify(data));
-		        			       	document.getElementById("lCode").innerHTML = ipJson["countryCode"];
-		        			       	document.getElementById("lNaam").innerHTML = ipJson["country"];
+		        			       	document.getElementById("lCode").innerHTML = ipJson["country"];
+		        			       	document.getElementById("lNaam").innerHTML = ipJson["country_name"];
 		        			       	document.getElementById("lRegio").innerHTML = ipJson["region"];
 		        			       	document.getElementById("lStad").innerHTML = ipJson["city"];
-		        			       	document.getElementById("lPostcode").innerHTML = ipJson["zip"];
-		        			       	document.getElementById("lLatitude").innerHTML = ipJson["lat"];
-		        			       	document.getElementById("lLongitude").innerHTML = ipJson["lon"];
-		        			       	document.getElementById("lIP").innerHTML = ipJson["query"];
-		        			       	showWeather(ipJson["lat"], ipJson["lon"], ipJson["city"])
+		        			       	document.getElementById("lPostcode").innerHTML = ipJson["postal"];
+		        			       	document.getElementById("lLatitude").innerHTML = ipJson["latitude"];
+		        			       	document.getElementById("lLongitude").innerHTML = ipJson["longitude"];
+		        			       	document.getElementById("lIP").innerHTML = ipJson["ip"];
+		        			       	showWeather(ipJson["latitude"], ipJson["longitude"], ipJson["city"])
 		        				}
 		        			});
 		        		});
