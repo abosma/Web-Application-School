@@ -75,7 +75,7 @@ public class Main {
 	}
 	
 	@DELETE
-	@RolesAllowed("user")
+	@RolesAllowed("User")
 	@Path("{ccode}/deletecountry")
 	public Response deleteCountry(@PathParam("ccode") String ccode){
 		
@@ -91,7 +91,7 @@ public class Main {
 	}
 	
 	@POST
-	@RolesAllowed("user")
+	@RolesAllowed("User")
 	@Path("/insertcountry")
 	public Response insertCountry(@FormParam("code") String ccode,
 								 @FormParam("capital") String capital,
@@ -117,7 +117,7 @@ public class Main {
 	}
 	
 	@PUT
-	@RolesAllowed("user")
+	@RolesAllowed("User")
 	@Path("{ccode}/updatecountry")
 	public Response updateCountry(@PathParam("ccode") String ccode,
 								 @FormParam("capital") String capital,
